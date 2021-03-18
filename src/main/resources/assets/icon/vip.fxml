@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.SVGPath?>
+<?import xyz.yuelai.control.SVG?>
+<SVG size="9">
+    <SVGPath content="M12 4H4L15 44H23L12 4Z" fill="#d00" stroke="#c20c0c" strokeWidth="4" strokeLineJoin="round"/>
+    <SVGPath content="M23 44L44 4" stroke="#c20c0c" strokeWidth="4" strokeLineJoin="round" strokeLineCap="round"/>
+</SVG>

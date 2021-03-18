@@ -1,0 +1,30 @@
+.button{
+    -fx-background-color: TRANSPARENT;
+    -fx-cursor: hand;
+}
+.round{
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+    -fx-background-radius: 100%;
+    -fx-border-radius: 100%;
+}
+
+.ele-slider {
+    -jfx-default-thumb: #e83c3c;
+    -jfx-default-track: #CCCCCC;
+}
+
+.ele-slider .thumb{
+    -fx-pref-width: 10px;
+    -fx-pref-height: 10px;
+    -fx-background-radius: 10px;
+}
+
+.ele-slider .track,
+.ele-slider .colored-track{
+    -fx-pref-height: 5px;
+}
+
+.ele-slider .animated-thumb{
+    visibility: false;
+}
