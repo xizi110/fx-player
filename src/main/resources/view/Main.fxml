@@ -17,15 +17,20 @@
             <HBox alignment="CENTER" spacing="10.0">
                 <Button fx:id="prev" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                         minWidth="-Infinity" mnemonicParsing="false" onAction="#prev" prefHeight="30.0" prefWidth="30.0"
-                        styleClass="round">
+                        styleClass="round" disable="true">
                     <graphic>
                         <fx:include source="/assets/icon/previous.fxml"/>
                     </graphic>
                 </Button>
                 <Button fx:id="control" mnemonicParsing="false" onAction="#playOrPause" prefHeight="30.0"
-                        prefWidth="30.0" styleClass="round"/>
+                        prefWidth="30.0" styleClass="round">
+                    <graphic>
+                        <fx:include source="/assets/icon/play.fxml"/>
+                    </graphic>
+                </Button>
+
                 <Button fx:id="next" mnemonicParsing="false" onAction="#next" prefHeight="30.0" prefWidth="30.0"
-                        styleClass="round">
+                        styleClass="round" disable="true">
                     <graphic>
                         <fx:include source="/assets/icon/next.fxml"/>
                     </graphic>
@@ -35,16 +40,16 @@
                 </padding>
             </HBox>
             <HBox alignment="CENTER">
-                <EleSlider fx:id="slider" maxWidth="1.7976931348623157E308" minHeight="-Infinity" value="20.0"
+                <EleSlider fx:id="slider" maxWidth="1.7976931348623157E308" minHeight="-Infinity" value="0.0"
                            HBox.hgrow="ALWAYS"/>
-                <Label fx:id="progressTime" alignment="CENTER" minWidth="-Infinity" text="2:34" textAlignment="RIGHT"
+                <Label fx:id="progressTime" alignment="CENTER" minWidth="-Infinity" text="00:00" textAlignment="RIGHT"
                        HBox.hgrow="ALWAYS">
                     <padding>
                         <Insets left="2.0"/>
                     </padding>
                 </Label>
                 <Label alignment="CENTER" minWidth="-Infinity" text="/" textAlignment="RIGHT" HBox.hgrow="ALWAYS"/>
-                <Label fx:id="totalTime" alignment="CENTER" minWidth="-Infinity" text="4:06" textAlignment="RIGHT"
+                <Label fx:id="totalTime" alignment="CENTER" minWidth="-Infinity" text="00:00" textAlignment="RIGHT"
                        HBox.hgrow="ALWAYS">
                     <padding>
                         <Insets right="2.0"/>
