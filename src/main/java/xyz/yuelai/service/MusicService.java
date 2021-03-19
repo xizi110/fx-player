@@ -61,7 +61,6 @@ public class MusicService {
         String detailResult = musicApi.detail(id);
         JSONObject jsonObject = JSONObject.parseObject(detailResult);
         JSONArray data = jsonObject.getJSONArray("data");
-        System.out.println(data);
         if (data.size() > 0) {
             return data.getJSONObject(0).getString("url");
         }

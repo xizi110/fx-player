@@ -1,6 +1,7 @@
 package xyz.yuelai;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import xyz.yuelai.view.MainView;
@@ -18,5 +19,9 @@ public class App extends Application {
         primaryStage.setWidth(800);
         primaryStage.setHeight(600);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
     }
 }

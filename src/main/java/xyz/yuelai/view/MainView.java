@@ -14,6 +14,8 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.yuelai.Receiver;
 import xyz.yuelai.View;
 import xyz.yuelai.control.SVG;
@@ -29,6 +31,9 @@ import java.util.ResourceBundle;
  * @date 2021-03-15 17:25:05 周一
  */
 public class MainView extends View {
+
+    private static final Logger logger = LoggerFactory.getLogger(SearchView.class);
+
     @Override
     public String fxml() {
         return "/view/Main.fxml";
@@ -51,12 +56,10 @@ public class MainView extends View {
     @FXML
     private StackPane content;
 
-    @FXML
     private MediaPlayer mediaPlayer;
     private BooleanProperty playing;
     private SearchView searchView;
     private MusicService musicService;
-
     private double muteBeforeVolume;
 
     @Override
@@ -71,16 +74,14 @@ public class MainView extends View {
 
         statusChangeListener = (observable, oldValue, newValue) -> statusChange(newValue);
         playStatusChangeListener = (observable, oldValue, newValue) -> {
-            System.out.println("observable = " + observable);
-            System.out.println("newValue = " + newValue);
             if (newValue) {
                 mediaPlayer.play();
                 control.setGraphic(readSvgFxml("/assets/icon/pause.fxml"));
+                logger.info("开始播放...");
             } else {
-                if (mediaPlayer != null) {
-                    mediaPlayer.pause();
-                }
+                mediaPlayer.pause();
                 control.setGraphic(readSvgFxml("/assets/icon/play.fxml"));
+                logger.info("播放暂停！");
             }
         };
 
@@ -89,9 +90,11 @@ public class MainView extends View {
                 // 记录静音时的音量值
                 muteBeforeVolume = mediaPlayer.getVolume();
                 volumeSlider.setValue(0);
+                logger.debug("静音！");
             } else {
                 // 取消静音，恢复静音前的音量值
                 volumeSlider.setValue(muteBeforeVolume);
+                logger.debug("取消静音！");
             }
         };
 
@@ -112,8 +115,6 @@ public class MainView extends View {
             }
         };
 
-        String resource = getClass().getResource("/music/dingxianghua.m4a").toExternalForm();
-        play(resource);
     }
 
     private ChangeListener<MediaPlayer.Status> statusChangeListener;
@@ -146,6 +147,7 @@ public class MainView extends View {
                 break;
             }
             default: {
+                playing.set(false);
                 disposed();
             }
         }
@@ -193,11 +195,14 @@ public class MainView extends View {
 
         // 点击进度条，鼠标释放，切换播放时间
         slider.setOnMouseReleased(event -> mediaPlayer.seek(Duration.millis(slider.getValue())));
+        logger.info("播放器准备完毕!");
     }
 
     @FXML
     private void playOrPause() {
-        playing.set(playing.not().get());
+        if (mediaPlayer != null && mediaPlayer.getMedia() != null) {
+            playing.set(playing.not().get());
+        }
     }
 
     @FXML
@@ -228,6 +233,7 @@ public class MainView extends View {
     @Receiver(name = "mainView:play")
     public void play(String source) {
         if (mediaPlayer != null) {
+            mediaPlayer.stop();
             mediaPlayer.dispose();
         }
         Media media = new Media(source);
@@ -256,8 +262,8 @@ public class MainView extends View {
         try {
             return FXMLLoader.load(getClass().getResource(path));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }

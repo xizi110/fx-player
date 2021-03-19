@@ -8,6 +8,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.yuelai.View;
 import xyz.yuelai.control.SVG;
 import xyz.yuelai.domain.MusicInfo;
@@ -19,6 +21,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SearchView extends View {
+
+    private static final Logger logger = LoggerFactory.getLogger(SearchView.class);
 
     private MusicService musicService;
     @FXML
@@ -100,12 +104,18 @@ public class SearchView extends View {
                     runAsync(new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
+                            logger.debug("当前双击的表格行的 musicInfo：" + musicInfo);
                             String url = musicService.getUrl(musicInfo.getId());
-                            System.out.println("url = " + url);
+                            logger.debug("获取到的 music url：" + url);
                             if (StringUtils.isNotBlank(url)) {
                                 sendMessageWithAsync("mainView:play", url);
                             }
                             return null;
+                        }
+
+                        @Override
+                        protected void failed() {
+                            logger.error(getException().getMessage(), getException());
                         }
                     });
                 }
@@ -117,6 +127,7 @@ public class SearchView extends View {
     @FXML
     private void search(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER && StringUtils.isNotBlank(keywords.getText())) {
+            logger.debug("搜索的歌曲名：" + keywords.getText());
             runAsync(new Task<SearchResult>() {
                 @Override
                 protected SearchResult call() {
@@ -124,7 +135,13 @@ public class SearchView extends View {
                 }
 
                 @Override
+                protected void failed() {
+                    logger.error(getException().getMessage(), getException());
+                }
+
+                @Override
                 protected void updateValue(SearchResult result) {
+                    logger.debug("搜索结果：" + result);
                     tableView.getItems().setAll(result.getSongs());
                 }
             });
@@ -141,9 +158,9 @@ public class SearchView extends View {
         try {
             return FXMLLoader.load(getClass().getResource(path));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
 }
