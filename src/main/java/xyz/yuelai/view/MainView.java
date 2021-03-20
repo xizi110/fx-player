@@ -24,7 +24,7 @@ import xyz.yuelai.util.FXUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * @author zhong
@@ -61,6 +61,7 @@ public class MainView extends View {
     private SearchView searchView;
     private MusicService musicService;
     private double muteBeforeVolume;
+    private Duration seekTime;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -108,13 +109,21 @@ public class MainView extends View {
         };
 
         currentTimeChangeListener = (observable, oldValue, newValue) -> {
-            progressTime.setText(FXUtil.formatMusicTime(newValue));
-            // 没有点击进度条则更新进度条的值，如果点击了进度条，则是调整时间
+            // 播放期间拖动进度条，不更新显示的时间
             if (!slider.isPressed()) {
-                slider.setValue(newValue.toMillis());
+                // 点击进度条，跳转指定时间，需要判断点击后的当前时间是否大于跳转的时间，
+                // 并且点击后的当前时间与跳转时间间隔不小于100ms，因为跳转时间不是实时的，
+                // newVal 可能是之前的旧值，所以需要判断新的当前时间是在跳转时间附近
+                if (seekTime != null && newValue.greaterThanOrEqualTo(seekTime) && newValue.subtract(seekTime).toMillis() < 1000){
+                    seekTime = null;
+                }else if (seekTime == null){
+                    // 如果没有点击进度条,或者已缓冲完成则正常更新时间
+                    progressTime.setText(FXUtil.formatMusicTime(newValue));
+                    slider.setValue(newValue.toMillis());
+                }
+                // 如果缓冲没有完成，则什么也不做
             }
         };
-
     }
 
     private ChangeListener<MediaPlayer.Status> statusChangeListener;
@@ -137,13 +146,10 @@ public class MainView extends View {
                 playing.set(false);
                 break;
             }
-            // 播放都是播放状态
+            // 缓冲，播放都是播放状态
+            case STALLED:
             case PLAYING: {
                 playing.set(true);
-                break;
-            }
-            // 缓冲
-            case STALLED: {
                 break;
             }
             default: {
@@ -153,6 +159,9 @@ public class MainView extends View {
         }
     }
 
+    /**
+     * 释放资源
+     */
     private void disposed() {
         mediaPlayer.statusProperty().removeListener(statusChangeListener);
         playing.removeListener(playStatusChangeListener);
@@ -178,6 +187,10 @@ public class MainView extends View {
         slider.setMin(startTime.toMillis());
         // 音乐进度条最大值，总时间
         slider.setMax(totalDuration.toMillis());
+        // 当前进度为0
+        slider.setValue(0);
+        progressTime.setText("00:00");
+
         // 音量调节绑定滑动条
         mediaPlayer.volumeProperty().bind(volumeSlider.valueProperty());
 
@@ -193,8 +206,21 @@ public class MainView extends View {
         // 监听当前时间，更新进度条和时间
         mediaPlayer.currentTimeProperty().addListener(currentTimeChangeListener);
 
+        seekTime = null;
         // 点击进度条，鼠标释放，切换播放时间
-        slider.setOnMouseReleased(event -> mediaPlayer.seek(Duration.millis(slider.getValue())));
+        slider.setOnMouseReleased(event -> {
+            seekTime = Duration.millis(slider.getValue());
+            mediaPlayer.seek(Duration.millis(slider.getValue()));
+            // 不会更新当前时间，需要手动设置
+            progressTime.setText(FXUtil.formatMusicTime(Duration.millis(slider.getValue())));
+        });
+
+        // 播放完毕结束
+        mediaPlayer.setOnEndOfMedia(() -> {
+            slider.setValue(0);
+            progressTime.setText("00:00");
+            mediaPlayer.stop();
+        });
         logger.info("播放器准备完毕!");
     }
 
@@ -222,7 +248,9 @@ public class MainView extends View {
      */
     @FXML
     private void volumeOnOff(ActionEvent event) {
-        mediaPlayer.setMute(!mediaPlayer.isMute());
+        if (mediaPlayer != null) {
+            mediaPlayer.setMute(!mediaPlayer.isMute());
+        }
     }
 
     /**
