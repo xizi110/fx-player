@@ -9,7 +9,8 @@ import com.dtflys.forest.annotation.Query;
  */
 public interface MusicApi {
 
-    @GetRequest(url = "http://musicapi.leanapp.cn/search")
+//    @GetRequest(url = "http://musicapi.leanapp.cn/search")
+    @GetRequest(url = "http://localhost:3000/search")
     String search(@Query("keywords") String keywords);
 
 //    @GetRequest(url = "https://api.imjad.cn/cloudmusic/?type=song&search_type=1")
