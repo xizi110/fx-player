@@ -20,8 +20,8 @@ public class MusicService {
 
     private MusicApi musicApi = ForestConfig.createInstance(MusicApi.class);
 
-    public SearchResult search(String keywords) {
-        String search = musicApi.search(keywords);
+    public SearchResult search(String keywords, int offset, int limit) {
+        String search = musicApi.search(keywords, offset, limit);
         JSONObject jsonObject = JSONObject.parseObject(search);
         Integer code = jsonObject.getInteger("code");
         if (!Objects.equals(code, 200)) {

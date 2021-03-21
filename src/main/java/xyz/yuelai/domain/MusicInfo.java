@@ -1,5 +1,7 @@
 package xyz.yuelai.domain;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.util.Duration;
 import xyz.yuelai.util.FXUtil;
 
@@ -28,6 +30,8 @@ public class MusicInfo {
      * 时间
      */
     private Integer duration;
+
+    private BooleanProperty playing;
     /**
      * fee，1是需要vip
      */
@@ -85,6 +89,21 @@ public class MusicInfo {
 
     public void setFee(Integer fee) {
         this.fee = fee;
+    }
+
+    public boolean isPlaying() {
+        return playingProperty().get();
+    }
+
+    public BooleanProperty playingProperty() {
+        if (playing == null){
+            playing = new SimpleBooleanProperty(false);
+        }
+        return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playingProperty().set(playing);
     }
 
     @Override

@@ -66,7 +66,7 @@ public class MainView extends View {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // 初始化对象
-        searchView = new SearchView();
+        searchView = createView(SearchView.class);
         musicService = new MusicService();
         playing = new SimpleBooleanProperty(false);
 
@@ -78,10 +78,12 @@ public class MainView extends View {
             if (newValue) {
                 mediaPlayer.play();
                 control.setGraphic(readSvgFxml("/assets/icon/pause.fxml"));
+                sendMessageWithAsync("searchView:playStart");
                 logger.info("开始播放...");
             } else {
                 mediaPlayer.pause();
                 control.setGraphic(readSvgFxml("/assets/icon/play.fxml"));
+                sendMessageWithAsync("searchView:playEnd");
                 logger.info("播放暂停！");
             }
         };

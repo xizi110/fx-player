@@ -1,3 +1,6 @@
+.root{
+    -fx-background-color: #fff;
+}
 .button{
     -fx-background-color: TRANSPARENT;
     -fx-cursor: hand;
@@ -7,11 +10,12 @@
     -fx-min-height: 0;
     -fx-background-radius: 100%;
     -fx-border-radius: 100%;
+    -fx-background-color: #e83c3c;
 }
 
 .ele-slider {
     -jfx-default-thumb: #e83c3c;
-    -jfx-default-track: #CCCCCC;
+    -jfx-default-track: #e6e6e8;
 }
 
 .ele-slider .thumb{
@@ -27,4 +31,20 @@
 
 .ele-slider .animated-thumb{
     visibility: false;
+}
+
+.table-view{
+    -fx-background-color: #fff;
+}
+
+.table-view .table-row-cell:selected{
+    -fx-background-color: #444;
+}
+
+.table-view .table-row-cell:selected .text{
+    -fx-fill: #fff;
+}
+
+.table-view .table-row-cell:selected .table-cell{
+    -fx-border-color: #0000 #444 #0000 #0000;
 }

@@ -14,31 +14,31 @@
     </HBox>
     <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="indexColumn" prefWidth="30" minWidth="20" maxWidth="60" resizable="false">
+            <TableColumn fx:id="indexColumn" resizable="false" sortable="false">
             </TableColumn>
-            <TableColumn text="歌曲名" fx:id="nameColumn">
+            <TableColumn text="歌曲名" fx:id="nameColumn" sortable="false" prefWidth="240">
                 <cellValueFactory>
                     <PropertyValueFactory property="name" />
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn text="歌手">
+            <TableColumn text="歌手" sortable="false" prefWidth="230">
                 <cellValueFactory>
                     <PropertyValueFactory property="artistName" />
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn text="专辑">
+            <TableColumn text="专辑" sortable="false" prefWidth="230">
                 <cellValueFactory>
                     <PropertyValueFactory property="albumName" />
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn maxWidth="80" minWidth="80" text="时长" resizable="false">
+            <TableColumn text="时长" resizable="false" sortable="false" prefWidth="80">
                 <cellValueFactory>
                     <PropertyValueFactory property="formatTime" />
                 </cellValueFactory>
             </TableColumn>
         </columns>
-      <columnResizePolicy>
-         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-      </columnResizePolicy>
+<!--      <columnResizePolicy>-->
+<!--         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />-->
+<!--      </columnResizePolicy>-->
     </TableView>
 </VBox>

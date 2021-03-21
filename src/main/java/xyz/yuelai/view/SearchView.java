@@ -1,8 +1,11 @@
 package xyz.yuelai.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -10,6 +13,7 @@ import javafx.util.Callback;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.yuelai.Receiver;
 import xyz.yuelai.View;
 import xyz.yuelai.control.SVG;
 import xyz.yuelai.domain.MusicInfo;
@@ -33,6 +37,7 @@ public class SearchView extends View {
     private TableColumn<MusicInfo, String> nameColumn;
     @FXML
     private TableColumn<MusicInfo, Integer> indexColumn;
+    private MusicInfo currentPlay;
 
     @Override
     public String fxml() {
@@ -46,7 +51,6 @@ public class SearchView extends View {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         musicService = new MusicService();
-
         indexColumn.setCellFactory(new Callback<>() {
             @Override
             public TableCell<MusicInfo, Integer> call(TableColumn<MusicInfo, Integer> param) {
@@ -56,12 +60,18 @@ public class SearchView extends View {
                         super.updateItem(item, empty);
                         if (empty) {
                             setText(null);
-                            setGraphic(null);
                         } else {
                             TableRow<MusicInfo> tableRow = getTableRow();
                             if (tableRow != null) {
                                 int index = tableRow.getIndex();
-                                setText(String.valueOf(index + 1));
+                                setText(String.format("%02d", index + 1));
+                                setContentDisplay(ContentDisplay.RIGHT);
+                                MusicInfo musicInfo = tableRow.getItem();
+                                if (musicInfo != null) {
+                                    SVG svg = readSvgFxml("/assets/icon/acoustic.fxml");
+                                    ObjectBinding<Node> objectBinding = Bindings.createObjectBinding(() -> musicInfo.isPlaying() ? svg : null, musicInfo.playingProperty());
+                                    graphicProperty().bind(objectBinding);
+                                }
                             }
                         }
                     }
@@ -114,6 +124,15 @@ public class SearchView extends View {
                         }
 
                         @Override
+                        protected void updateValue(Void value) {
+                            musicInfo.setPlaying(true);
+                            if (currentPlay != null) {
+                                currentPlay.setPlaying(false);
+                            }
+                            currentPlay = musicInfo;
+                        }
+
+                        @Override
                         protected void failed() {
                             logger.error(getException().getMessage(), getException());
                         }
@@ -124,28 +143,58 @@ public class SearchView extends View {
         });
     }
 
+    @Receiver(name = "searchView:playStart")
+    public void playStart() {
+        if (currentPlay != null) {
+            currentPlay.setPlaying(true);
+        }
+    }
+
+    @Receiver(name = "searchView:playEnd")
+    public void playEnd() {
+        if (currentPlay != null) {
+            currentPlay.setPlaying(false);
+        }
+    }
+
+    /**
+     * 是否正在搜索
+     */
+    private int offset;
+    private int limit;
+    private boolean hasMore = false;
+
     @FXML
     private void search(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER && StringUtils.isNotBlank(keywords.getText())) {
-            logger.debug("搜索的歌曲名：" + keywords.getText());
-            runAsync(new Task<SearchResult>() {
-                @Override
-                protected SearchResult call() {
-                    return musicService.search(keywords.getText());
-                }
-
-                @Override
-                protected void failed() {
-                    logger.error(getException().getMessage(), getException());
-                }
-
-                @Override
-                protected void updateValue(SearchResult result) {
-                    logger.debug("搜索结果：" + result);
-                    tableView.getItems().setAll(result.getSongs());
-                }
-            });
+            offset = 0;
+            limit = 30;
+            tableView.getItems().clear();
+            search(keywords.getText(), offset, limit);
         }
+    }
+
+    private void search(String keywords, int offset, int limit) {
+        logger.debug("搜索的歌曲名：" + keywords);
+        this.offset = offset + limit;
+        runAsync(new Task<SearchResult>() {
+            @Override
+            protected SearchResult call() {
+                return musicService.search(keywords, offset, limit);
+            }
+
+            @Override
+            protected void failed() {
+                logger.error(getException().getMessage(), getException());
+            }
+
+            @Override
+            protected void updateValue(SearchResult result) {
+                logger.debug("搜索结果：" + result);
+                tableView.getItems().addAll(result.getSongs());
+                hasMore = result.getHasMore();
+            }
+        });
     }
 
     /**

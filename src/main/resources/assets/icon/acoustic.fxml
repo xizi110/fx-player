@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.SVGPath?>
+<?import xyz.yuelai.control.SVG?>
+<SVG>
+    <SVGPath content="M24 3.99976V43.9998" stroke="#d70303" strokeWidth="4" strokeLineCap="round"/>
+    <SVGPath content="M34 11.9998V35.9998" stroke="#d70303" strokeWidth="4" strokeLineCap="round"/>
+    <SVGPath content="M4 17.9998V29.9998" stroke="#d70303" strokeWidth="4" strokeLineCap="round"/>
+    <SVGPath content="M44 17.9998V29.9998" stroke="#d70303" strokeWidth="4" strokeLineCap="round"/>
+    <SVGPath content="M14 11.9998V35.9998" stroke="#d70303" strokeWidth="4" strokeLineCap="round"/>
+</SVG>

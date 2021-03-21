@@ -16,8 +16,9 @@ public class App extends Application {
         MainView view = View.createView(MainView.class);
         Scene scene = new Scene(view.getRoot());
         primaryStage.setScene(scene);
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(600);
+        primaryStage.setWidth(900);
+        primaryStage.setHeight(560);
+        primaryStage.setResizable(false);
         primaryStage.show();
         primaryStage.setOnCloseRequest(event -> {
             Platform.exit();
