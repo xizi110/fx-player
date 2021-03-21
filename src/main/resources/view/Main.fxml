@@ -68,6 +68,13 @@
                     </graphic>
                 </Button>
                 <EleSlider fx:id="volumeSlider" max="1.0" min="0" maxWidth="100.0" minWidth="0.0" value="0.1"/>
+                <Button fx:id="lyrics" maxHeight="-Infinity" maxWidth="-Infinity"
+                        minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0"
+                        prefWidth="30.0">
+                    <graphic>
+                        <fx:include source="/assets/icon/lyric.fxml"/>
+                    </graphic>
+                </Button>
                 <padding>
                     <Insets left="10.0" right="10.0"/>
                 </padding>
