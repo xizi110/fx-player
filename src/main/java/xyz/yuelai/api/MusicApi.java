@@ -11,7 +11,7 @@ public interface MusicApi {
 
 //    @GetRequest(url = "http://musicapi.leanapp.cn/search")
     @GetRequest(url = "http://localhost:3000/search")
-    String search(@Query("keywords") String keywords);
+    String search(@Query("keywords") String keywords, int offset, int limit);
 
 //    @GetRequest(url = "https://api.imjad.cn/cloudmusic/?type=song&search_type=1")
     @GetRequest(url = "http://localhost:3000/song/url")
